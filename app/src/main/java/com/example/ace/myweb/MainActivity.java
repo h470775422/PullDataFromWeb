@@ -9,22 +9,25 @@ import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.mydb.MyDB;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
+    MyDB myDB = null;
     PullData pd = new PullData();
     ListView lv = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        myDB = new MyDB(this);
         new Thread(new Runnable() {
             @Override
             public void run() {
-                initialList();
+                pullTeacher();
             }
         }).start();
 
@@ -32,16 +35,11 @@ public class MainActivity extends AppCompatActivity {
 
     Handler handler = new Handler(){
         public void handleMessage(Message m){
-            lv = (ListView)findViewById(R.id.lv);
-            List<String> list = new ArrayList<String>();
-            for(Teacher t:pd.teachers){
-                String name = t.name;
-                list.add(name);
-                if(list.size() > 100)
-                    break;
-            }
-            ArrayAdapter<String> adapter = new ArrayAdapter<String>(MainActivity.this,android.R.layout.simple_list_item_1,list);
-            lv.setAdapter(adapter);
+        switch (m.what){
+            case 1:
+                initialList();
+                break;
+        }
             super.handleMessage(m);
         }
     };
@@ -67,9 +65,27 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void initialList(){
-        pd.verySimplePullDataThatYouNeverThinkOut();
+    private  void pullTeacher(){
+        pd.getAllTeachers();
         Message m = new Message();
+        m.what = 1;
         handler.sendMessage(m);
+        myDB.insertTeacher(pd.teachers);
     }
+
+
+    public void initialList(){
+        lv = (ListView)findViewById(R.id.lv);
+        List<String> list = new ArrayList<String>();
+        for(Teacher t:pd.teachers){
+            String name = t.name;
+            list.add(name);
+            //if(list.size() > 100)
+            // break;
+        }
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(MainActivity.this,android.R.layout.simple_list_item_1,list);
+        lv.setAdapter(adapter);
+    }
+
+
 }

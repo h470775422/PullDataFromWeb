@@ -23,7 +23,7 @@ import java.util.List;
 public class PullData {
 
     public List<Teacher> teachers = new ArrayList<Teacher>();
-        public void verySimplePullDataThatYouNeverThinkOut(){
+        public void getAllTeachers(){
             String url1 = "http://121.248.70.214/jwweb/ZNPK/Private/List_JS.aspx?js=&xnxq=20150";
 
             try {
@@ -39,11 +39,13 @@ public class PullData {
                 Elements ele = doc.select("script");
                 Element e = ele.first();
                 String scripts = e.html();
-                getTeacher(scripts);
+                getTeacher2(scripts);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
+
+
         private void getTeacher(String html) {
             Teacher tea = null;
             while (true) {
@@ -70,4 +72,18 @@ public class PullData {
                 html = html.substring(i);
             }
         }
+
+    private void getTeacher2(String html){
+        Document doc = Jsoup.parse(html);
+
+
+        Elements eles = doc.getElementsByTag("option");
+        for(Element e:eles){
+            Teacher teacher = new Teacher();
+            teacher.id = e.attr("value");
+            teacher.name = e.text();
+            teachers.add(teacher);
+        }
+    }
+
 }
