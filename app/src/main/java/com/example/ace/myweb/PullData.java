@@ -82,6 +82,8 @@ public class PullData {
             Teacher teacher = new Teacher();
             teacher.id = e.attr("value");
             teacher.name = e.text();
+            if(teacher.name.equals(""))
+                continue;
             teachers.add(teacher);
         }
     }
