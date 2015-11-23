@@ -17,7 +17,8 @@
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/termEdit"/>
+            android:id="@+id/termEdit"
+            android:text="2015-2016第一学期"/>
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
@@ -48,12 +49,14 @@
                 android:text="格式一"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:onClick="onRadioButtonClicked"/>
+                android:onClick="onRadioButtonClicked"
+                android:id="@+id/radioType1"/>
             <RadioButton
                 android:text="格式二"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:onClick="onRadioButtonClicked"/>
+                android:onClick="onRadioButtonClicked"
+                android:id="@+id/radioType2"/>
         </RadioGroup>
     </LinearLayout>
     <LinearLayout
@@ -61,14 +64,26 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
         <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/validate"/>
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/validate"
+            android:onClick="getNewValidateImage"/>
         <EditText
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:id="@+id/yzm"/>
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <Button
+            android:text="检索"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="searchCourse"/>
+    </LinearLayout>
 
     <ListView
         android:layout_width="match_parent"

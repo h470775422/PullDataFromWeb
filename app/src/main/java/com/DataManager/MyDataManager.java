@@ -1,6 +1,7 @@
 package com.DataManager;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 
 import com.Http.MyHttpConnector;
 import com.mydb.MyDB;
@@ -18,17 +19,43 @@ public class MyDataManager {
 
     private List<Teacher> teachers = new ArrayList<Teacher>();
 
-    private String term;
+    private String teacher;
+
+    public String getTeacher() {
+        return teacher;
+    }
+
+    public void setTeacher(String teacher) {
+        this.teacher = teacher;
+        for(Teacher t:teachers){
+            if(t.name.equals(teacher)){
+                tno = t.id;
+            }
+        }
+    }
+
+    private String term = "20150";
     private String tno;
     private String type;
     private String validate;
+
+    public Bitmap getBitmap() {
+        return bitmap;
+    }
+
+    public void setBitmap(Bitmap bitmap) {
+        this.bitmap = bitmap;
+    }
+
+    private Bitmap bitmap;
 
     //construst
     public MyDataManager(Context context){
         myDB = new MyDB(context);
         connector = new MyHttpConnector();
-    }
 
+
+    }
 
     public List<Teacher> getTeachers() {
         return teachers;
@@ -44,6 +71,14 @@ public class MyDataManager {
 
     public void setTno(String tno) {
         this.tno = tno;
+    }
+
+    public MyHttpConnector getConnector() {
+        return connector;
+    }
+
+    public void setConnector(MyHttpConnector connector) {
+        this.connector = connector;
     }
 
     public String getType() {
@@ -73,6 +108,10 @@ public class MyDataManager {
 
     public void getAllTeachers(){
         teachers = connector.getAllTeachers();
+    }
+
+    public void getCourses(){
+        connector.getCourses(term,tno,type,validate);
     }
 }
 

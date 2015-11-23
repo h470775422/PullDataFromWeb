@@ -21,12 +21,17 @@ public class MyDB {
         readDB = dbHelper.getReadableDatabase();
     }
 
-    public void insertTeacher(List<Teacher> teachers){
+    public void insertTeachers(List<Teacher> teachers){
         String sql = "insert into teacher values(?,?)";
         for(Teacher t:teachers){
             writeDB.execSQL(sql,new String[]{t.id,t.name});
         }
     }
+
+//    public List<Teacher> getTeachers(){
+//        //readDB.ex
+//
+//    }
 
     public void closeDB(){
         writeDB.close();
