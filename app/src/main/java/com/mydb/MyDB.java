@@ -3,7 +3,7 @@ package com.mydb;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.example.ace.myweb.Teacher;
+import com.DataManager.Teacher;
 
 import java.util.List;
 
@@ -26,7 +26,6 @@ public class MyDB {
         for(Teacher t:teachers){
             writeDB.execSQL(sql,new String[]{t.id,t.name});
         }
-
     }
 
     public void closeDB(){

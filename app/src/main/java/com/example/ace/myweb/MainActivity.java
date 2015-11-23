@@ -9,6 +9,9 @@ import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.DataManager.MyDataManager;
+import com.DataManager.Teacher;
+import com.Http.MyHttpConnector;
 import com.mydb.MyDB;
 
 import java.util.ArrayList;
@@ -16,24 +19,26 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    MyDB myDB = null;
-    PullData pd = new PullData();
+
+    private MyDataManager myDataManager = null;
+
     ListView lv = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        myDB = new MyDB(this);
+
+        myDataManager = new MyDataManager(this);
         new Thread(new Runnable() {
             @Override
             public void run() {
-                pullTeacher();
+                pullTeacherThread();
             }
         }).start();
 
     }
 
-    Handler handler = new Handler(){
+    final Handler handler = new Handler(){
         public void handleMessage(Message m){
         switch (m.what){
             case 1:
@@ -65,19 +70,19 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private  void pullTeacher(){
-        pd.getAllTeachers();
+    private  void pullTeacherThread(){
+        myDataManager.getAllTeachers();
         Message m = new Message();
         m.what = 1;
         handler.sendMessage(m);
-        myDB.insertTeacher(pd.teachers);
+       // myDB.insertTeacher(pd.teachers);
     }
 
 
     public void initialList(){
         lv = (ListView)findViewById(R.id.lv);
         List<String> list = new ArrayList<String>();
-        for(Teacher t:pd.teachers){
+        for(Teacher t:myDataManager.getTeachers()){
             String name = t.name;
             list.add(name);
             //if(list.size() > 100)
