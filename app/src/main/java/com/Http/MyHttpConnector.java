@@ -5,7 +5,6 @@ import android.graphics.BitmapFactory;
 import android.util.Log;
 
 import com.DataManager.Course;
-import com.DataManager.MyDataManager;
 import com.DataManager.Teacher;
 
 import org.apache.http.HttpEntity;
@@ -15,7 +14,6 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
@@ -24,13 +22,10 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Array;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -139,39 +134,73 @@ public class MyHttpConnector {
         return bitmap;
     }
 
-    public void getCourses(String term,String tno,String type,String yzm){
+    public List<Course> getCourses(String term,String tno,String type,String yzm) {
         HttpClient client = new DefaultHttpClient();
-        HttpResponse res = null;
-        Bitmap bitmap = null;
+        HttpResponse res;
+        String html = null;
+        HttpEntity entity;
+        List<Course> courses = new ArrayList<>();
         try {
             res = client.execute(makeCourseRequest(term, tno, type, yzm));
-            HttpEntity entity = res.getEntity();
-            String html = null;
+            entity = res.getEntity();
             html = EntityUtils.toString(entity);
-     //       Log.i("all",html);
-            Document doc = Jsoup.parse(html);
-            Elements eles1 = doc.select("br");
-            for(Element e:eles1){
-               e.remove();
-            }
-
-            Elements eles = doc.select("tbody>tr>td");
-
-            int index = 14;
-            Course c = new Course();
-            c.setId(eles.get(index++).html());
-            c.setName(eles.get(index++).html());
-            c.setScore(eles.get(index++).html());
-            c.setType(eles.get(index++).html());
-            c.setCourseType(eles.get(index++).html());
-            c.setClassNo(eles.get(index++).html());
-            c.setClassName(eles.get(index++).html());
-            c.setNumbers(eles.get(index++).html());
-            c.setTime(eles.get(index++).html());
-            c.setAddress(eles.get(index++).html());
-
         } catch (Exception e) {
             e.printStackTrace();
         }
+        Log.i("all", html);
+        Document doc = Jsoup.parse(html);
+        Elements eles1 = doc.select("br");
+        for (Element e : eles1) {
+            e.remove();
+        }
+
+        Elements eles = doc.select("tbody>tr>td");
+//            int g = 0;
+//            for(Element e:eles){
+//                Log.i("韩翔辉", e.html() + ".........." + g++);
+//            }
+        boolean begin = false;
+        Course preCourse = null;
+        for (int index = 0; index < eles.size(); index++) {
+            if (eles.get(index).html().equals("地点")) {
+                begin = true;
+                continue;
+            } else if (eles.get(index).html().equals("<b>注1：</b>")) {
+                break;
+            }
+            if (begin) {
+                Course c = new Course();
+                ++index;
+                String[] strs = getCno(eles.get(index++).html());
+                String cno = strs[0];
+                String name = strs[1];
+                c.setCno(cno.equals("") ? preCourse.getCno() : cno);
+                c.setName(name.equals("") ? preCourse.getName() : name);
+                c.setScore(eles.get(index).html().equals("") ? preCourse.getScore() : eles.get(index).html());index++;
+                c.setType(eles.get(index).html().equals("") ? preCourse.getType() : eles.get(index).html());index++;
+                c.setCourseType(eles.get(index).html().equals("") ? preCourse.getCourseType() : eles.get(index).html());index++;
+                c.setClassNo(eles.get(index).html().equals("") ? preCourse.getClassNo() : eles.get(index).html());index++;
+                c.setClassName(eles.get(index).html().equals("") ? preCourse.getClassName() : eles.get(index).html());index++;
+                c.setNumbers(eles.get(index).html().equals("") ? preCourse.getNumbers() : eles.get(index).html());index++;
+                c.setTime(eles.get(index).html().equals("") ? preCourse.getTime() : eles.get(index).html());index++;
+                c.setAddress(eles.get(index).html().equals("") ? preCourse.getAddress() : eles.get(index).html());
+                if(!c.getCno().equals(""))
+                    preCourse = c;
+                courses.add(c);
+//                Log.i("课程表",c.getCno()+".."+c.getName());
+            }
+
+        }
+        return courses;
+    }
+
+    public String[] getCno(String name) {
+        if(name.indexOf("[") == -1){
+            String[] d = new String[]{"",""};
+            return d;
+        }
+        String[] strs = name.split("\\[");
+        String s = strs[1];
+        return s.split("\\]");
     }
 }

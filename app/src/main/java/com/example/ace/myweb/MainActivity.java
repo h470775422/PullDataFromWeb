@@ -4,8 +4,11 @@ import android.graphics.Bitmap;
 import android.media.Image;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -16,6 +19,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.TextView;
@@ -29,9 +33,9 @@ import com.mydb.MyDB;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements View.OnTouchListener{
+public class MainActivity extends AppCompatActivity implements View.OnTouchListener,GestureDetector.OnGestureListener{
 
-
+    private GestureDetector detector = null;
     private MyDataManager myDataManager = null;
 
     private ListView lv = null;
@@ -40,6 +44,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     private EditText yzm = null;
     private Bitmap bitmap = null;
     private ViewFlipper vf = null;
+
 
 
     @Override
@@ -53,9 +58,12 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         teacher = (EditText)findViewById(R.id.teacherEdit);
         yzm = (EditText)findViewById(R.id.yzm);
 
+        detector = new GestureDetector(this,this);
+        detector.setIsLongpressEnabled(true);
 
         vf = (ViewFlipper)findViewById(R.id.vf);
-
+        vf.setOnTouchListener(this);
+        vf.setLongClickable(true);
 
 
         lv = (ListView)findViewById(R.id.lv);
@@ -89,6 +97,9 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
                 case 2:
                     if(bitmap != null)
                       imageView.setImageBitmap(bitmap);
+                    break;
+                case 3:
+                  //  ((TextView)findViewById(R.id.testText)).setText(myDataManager.getCourses());
                     break;
             }
             super.handleMessage(m);
@@ -163,6 +174,9 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
             @Override
             public void run() {
                 myDataManager.getCourses();
+                Message m = new Message();
+                m.what = 3;
+                handler.sendMessage(m);
             }
         }).start();
     }
@@ -184,6 +198,38 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
+        detector.onTouchEvent(event);
         return false;
     }
+    @Override
+    public boolean onDown(MotionEvent e) {
+        return false;
+    }
+
+    @Override
+    public void onShowPress(MotionEvent e) {
+    }
+
+    @Override
+    public boolean onSingleTapUp(MotionEvent e) {
+        return false;
+    }
+
+    @Override
+    public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+        return false;
+    }
+
+    @Override
+    public void onLongPress(MotionEvent e) {
+
+    }
+
+    @Override
+    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+        setLeftInAnimation();
+        vf.showNext();
+        return false;
+    }
+
 }

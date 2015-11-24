@@ -19,6 +19,7 @@ public class MyDataManager {
 
     private List<Teacher> teachers = new ArrayList<Teacher>();
 
+    private List<Course> courses = new ArrayList<Course>();
     private String teacher;
 
     public String getTeacher() {
@@ -35,7 +36,7 @@ public class MyDataManager {
     }
 
     private String term = "20150";
-    private String tno;
+    private String tno = "0000842";
     private String type = "2";
     private String validate;
 
@@ -53,8 +54,6 @@ public class MyDataManager {
     public MyDataManager(Context context){
         myDB = new MyDB(context);
         connector = new MyHttpConnector();
-
-
     }
 
     public List<Teacher> getTeachers() {
@@ -111,7 +110,8 @@ public class MyDataManager {
     }
 
     public void getCourses(){
-        connector.getCourses(term,tno,type,validate);
+        courses = connector.getCourses(term,tno,type,validate);
+        myDB.insertCourses(courses,tno);
     }
 }
 

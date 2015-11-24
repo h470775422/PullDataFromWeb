@@ -1,35 +1,48 @@
 package com.DataManager;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by ACE on 2015/11/24.
  */
 public class Course {
 
-    String id = "";
-    String name = "";
-    String score = "";
-    String type = "";//授课方式
-    String courseType = "";
-    String classNo = "";//课程类别
-    String className = "";
-    String numbers = "";
-    String time = "";
-    String address = "";
+    private String cno = "";//序号
+    private String name = "";//课程名
+    private String score = "";//学分
+    private String type = "";//授课方式
+    private String courseType = "";//课程类别
+    private String classNo = "";//上课班号
+    private String className = "";//上课班级
+    private String numbers = "";//上课人数
+    private String time = "";//上课时间
+    private String address = "";//上课地址
 
+    public String getTime() { return time;}
+
+    public void setTime(String time) {
+        this.time = time;
+    }
+    public String getAddress() {
+        return address;
+    }
+    public void setAddress(String address) {
+        this.address = address;
+    }
     public String getCourseType() {
         return courseType;
     }
-
     public void setCourseType(String courseType) {
         this.courseType = courseType;
     }
 
-    public String getId() {
-        return id;
+    public String getCno() {
+        return cno;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setCno(String cno) {
+        this.cno = cno;
     }
 
     public String getName() {
@@ -80,21 +93,7 @@ public class Course {
         this.numbers = numbers;
     }
 
-    public String getTime() {
-        return time;
-    }
 
-    public void setTime(String time) {
-        this.time = time;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
 
 
 }
