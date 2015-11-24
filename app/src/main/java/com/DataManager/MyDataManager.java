@@ -36,7 +36,7 @@ public class MyDataManager {
 
     private String term = "20150";
     private String tno;
-    private String type;
+    private String type = "2";
     private String validate;
 
     public Bitmap getBitmap() {

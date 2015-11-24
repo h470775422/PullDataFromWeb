@@ -8,7 +8,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -16,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.TextView;
+import android.widget.ViewFlipper;
 
 import com.DataManager.MyDataManager;
 import com.DataManager.Teacher;
@@ -25,16 +29,19 @@ import com.mydb.MyDB;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnTouchListener{
 
 
     private MyDataManager myDataManager = null;
 
-    ListView lv = null;
-    ImageView imageView = null;
-    EditText teacher = null;
-    EditText yzm = null;
+    private ListView lv = null;
+    private ImageView imageView = null;
+    private EditText teacher = null;
+    private EditText yzm = null;
     private Bitmap bitmap = null;
+    private ViewFlipper vf = null;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,6 +52,12 @@ public class MainActivity extends AppCompatActivity {
         imageView = (ImageView)findViewById(R.id.validate);
         teacher = (EditText)findViewById(R.id.teacherEdit);
         yzm = (EditText)findViewById(R.id.yzm);
+
+
+        vf = (ViewFlipper)findViewById(R.id.vf);
+
+
+
         lv = (ListView)findViewById(R.id.lv);
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -52,6 +65,8 @@ public class MainActivity extends AppCompatActivity {
                 String name = ((TextView)view).getText().toString();
                 myDataManager.setTeacher(name);
                 teacher.setText(name);
+                setRightInAnimation();
+                vf.showPrevious();
             }
         });
 
@@ -67,14 +82,15 @@ public class MainActivity extends AppCompatActivity {
 
     final Handler handler = new Handler(){
         public void handleMessage(Message m){
-        switch (m.what){
-            case 1:
-                initialList();
-                break;
-            case 2:
-                imageView.setImageBitmap(bitmap);
-                break;
-        }
+            switch (m.what){
+                case 1:
+                    initialList();
+                    break;
+                case 2:
+                    if(bitmap != null)
+                      imageView.setImageBitmap(bitmap);
+                    break;
+            }
             super.handleMessage(m);
         }
     };
@@ -100,6 +116,7 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    //获取所有信息
     private  void pullTeacherThread(){
         myDataManager.getAllTeachers();
         Message m = new Message();
@@ -108,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
        // myDB.insertTeacher(pd.teachers);
     }
 
-
+    //初始化listview
     public void initialList(){
         List<String> list = new ArrayList<String>();
         for(Teacher t:myDataManager.getTeachers()){
@@ -121,6 +138,7 @@ public class MainActivity extends AppCompatActivity {
         lv.setAdapter(adapter);
     }
 
+    //显示验证码
     public void initialImageView(){
         bitmap = myDataManager.getConnector().getValidateImage();
         Message m = new Message();
@@ -128,6 +146,7 @@ public class MainActivity extends AppCompatActivity {
         handler.sendMessage(m);
     }
 
+    //获取验证码图片
     public void getNewValidateImage(View v){
         new Thread(new Runnable() {
             @Override
@@ -137,22 +156,6 @@ public class MainActivity extends AppCompatActivity {
         }).start();
     }
 
-
-    public void onRadioButtonClicked(View view) {
-        // Is the button now checked?
-        boolean checked = ((RadioButton) view).isChecked();
-
-        switch(view.getId()) {
-            case R.id.radioType1:
-                if (checked)
-                    myDataManager.setType("1");
-                    break;
-            case R.id.radioType2:
-                if (checked)
-                    myDataManager.setType("2");
-                    break;
-        }
-    }
     public void searchCourse(View v){
         String yzm = this.yzm.getText().toString();
         myDataManager.setValidate(yzm);
@@ -165,4 +168,22 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    public void selectName(View view) {
+        setLeftInAnimation();
+        vf.showNext();
+    }
+
+    private void setLeftInAnimation(){
+        vf.setInAnimation(AnimationUtils.loadAnimation(this,R.anim.left_in));
+        vf.setOutAnimation(AnimationUtils.loadAnimation(this, R.anim.right_out));
+    }
+    private void setRightInAnimation(){
+        vf.setInAnimation(AnimationUtils.loadAnimation(this,R.anim.right_in));
+        vf.setOutAnimation(AnimationUtils.loadAnimation(this, R.anim.left_out));
+    }
+
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        return false;
+    }
 }

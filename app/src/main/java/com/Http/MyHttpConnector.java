@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
 
+import com.DataManager.Course;
 import com.DataManager.MyDataManager;
 import com.DataManager.Teacher;
 
@@ -37,7 +38,7 @@ import java.util.List;
  */
 public class MyHttpConnector {
 
-    private String cookie = "ASP.NET_SessionId=heggkcytcazhbz45kbkhlv55; ASP.NET_SessionId_NS_Sig=oenCV6mdwWt3-1C_";
+    private String cookie = "ASP.NET_SessionId=lm5oiwrhduakcobhl20bn2q4";
     private String referer = "http://121.248.70.214/jwweb/ZNPK/TeacherKBFB.aspx";
 
 
@@ -147,15 +148,28 @@ public class MyHttpConnector {
             HttpEntity entity = res.getEntity();
             String html = null;
             html = EntityUtils.toString(entity);
+     //       Log.i("all",html);
             Document doc = Jsoup.parse(html);
             Elements eles1 = doc.select("br");
             for(Element e:eles1){
                e.remove();
             }
-            Elements eles = doc.select("td");
-            for(Element e:eles){
-                Log.i("han", e.html());
-            }
+
+            Elements eles = doc.select("tbody>tr>td");
+
+            int index = 14;
+            Course c = new Course();
+            c.setId(eles.get(index++).html());
+            c.setName(eles.get(index++).html());
+            c.setScore(eles.get(index++).html());
+            c.setType(eles.get(index++).html());
+            c.setCourseType(eles.get(index++).html());
+            c.setClassNo(eles.get(index++).html());
+            c.setClassName(eles.get(index++).html());
+            c.setNumbers(eles.get(index++).html());
+            c.setTime(eles.get(index++).html());
+            c.setAddress(eles.get(index++).html());
+
         } catch (Exception e) {
             e.printStackTrace();
         }
