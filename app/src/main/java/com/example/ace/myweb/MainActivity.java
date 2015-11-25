@@ -33,7 +33,7 @@ import com.mydb.MyDB;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements View.OnTouchListener,GestureDetector.OnGestureListener{
+public class MainActivity extends AppCompatActivity{
 
     private GestureDetector detector = null;
     private MyDataManager myDataManager = null;
@@ -58,13 +58,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         teacher = (EditText)findViewById(R.id.teacherEdit);
         yzm = (EditText)findViewById(R.id.yzm);
 
-        detector = new GestureDetector(this,this);
-        detector.setIsLongpressEnabled(true);
-
         vf = (ViewFlipper)findViewById(R.id.vf);
-        vf.setOnTouchListener(this);
-        vf.setLongClickable(true);
-
 
         lv = (ListView)findViewById(R.id.lv);
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -196,40 +190,6 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         vf.setOutAnimation(AnimationUtils.loadAnimation(this, R.anim.left_out));
     }
 
-    @Override
-    public boolean onTouch(View v, MotionEvent event) {
-        detector.onTouchEvent(event);
-        return false;
-    }
-    @Override
-    public boolean onDown(MotionEvent e) {
-        return false;
-    }
 
-    @Override
-    public void onShowPress(MotionEvent e) {
-    }
-
-    @Override
-    public boolean onSingleTapUp(MotionEvent e) {
-        return false;
-    }
-
-    @Override
-    public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-        return false;
-    }
-
-    @Override
-    public void onLongPress(MotionEvent e) {
-
-    }
-
-    @Override
-    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-        setLeftInAnimation();
-        vf.showNext();
-        return false;
-    }
 
 }
