@@ -14,6 +14,8 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.cookie.Cookie;
+import org.apache.http.impl.client.AbstractHttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
@@ -22,6 +24,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -36,6 +39,33 @@ public class MyHttpConnector {
     private String cookie = "ASP.NET_SessionId=lm5oiwrhduakcobhl20bn2q4";
     private String referer = "http://121.248.70.214/jwweb/ZNPK/TeacherKBFB.aspx";
 
+
+    public MyHttpConnector(){
+    }
+
+    public void getCookieFromResponse(){
+        String url = "http://121.248.70.214/jwweb/ZNPK/TeacherKBFB.aspx";
+        HttpGet request = new HttpGet(url);
+        HttpClient client = new DefaultHttpClient();
+        try {
+            client.execute(request);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        List<Cookie> cookies = ((AbstractHttpClient) client).getCookieStore().getCookies();
+        System.out.println("开始写Cookie啦！！！！！！！！！！！！！！！！！！");
+        if (cookies.isEmpty()) {
+            System.out.println("cookies is empty");
+        } else {
+            for (int i = 0; i < cookies.size(); i++) {
+                cookie = "";
+                cookie += cookies.get(i).getName();
+                cookie += "=";
+                cookie += cookies.get(i).getValue();
+                Log.i("cooke",cookie);
+            }
+        }
+    }
 
     private HttpGet makeTeacherRequest(String grade, String name) {
         String url = "http://121.248.70.214/jwweb/ZNPK/Private/List_JS.aspx?xnxq=";
@@ -106,7 +136,7 @@ public class MyHttpConnector {
             eles = doc.getElementsByTag("option");
             for (Element e : eles) {
                 Teacher teacher = new Teacher();
-                teacher.id = e.attr("value");
+                teacher.no = e.attr("value");
                 teacher.name = e.text();
                 if (teacher.name.equals(""))
                     continue;
@@ -187,7 +217,7 @@ public class MyHttpConnector {
                 if(!c.getCno().equals(""))
                     preCourse = c;
                 courses.add(c);
-//                Log.i("课程表",c.getCno()+".."+c.getName());
+                Log.i("课程表",c.getCno()+".."+c.getName());
             }
 
         }

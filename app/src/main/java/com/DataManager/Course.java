@@ -1,12 +1,13 @@
 package com.DataManager;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by ACE on 2015/11/24.
  */
-public class Course {
+public class Course implements Serializable {
 
     private String cno = "";//序号
     private String name = "";//课程名

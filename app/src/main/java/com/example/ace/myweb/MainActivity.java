@@ -1,5 +1,6 @@
 package com.example.ace.myweb;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.media.Image;
 import android.os.Handler;
@@ -25,17 +26,20 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 
+import com.DataManager.Course;
 import com.DataManager.MyDataManager;
 import com.DataManager.Teacher;
 import com.Http.MyHttpConnector;
+import com.course.CoursesActivity;
 import com.mydb.MyDB;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity{
 
-    private GestureDetector detector = null;
+
     private MyDataManager myDataManager = null;
 
     private ListView lv = null;
@@ -71,16 +75,23 @@ public class MainActivity extends AppCompatActivity{
                 vf.showPrevious();
             }
         });
+        initialDataThread();
 
+
+    }
+
+    public void initialDataThread(){
         new Thread(new Runnable() {
             @Override
             public void run() {
-                pullTeacherThread();
+                myDataManager.getConnector().getCookieFromResponse();
+                loadTeacherThread();
                 initialImageView();
             }
         }).start();
-
     }
+
+
 
     final Handler handler = new Handler(){
         public void handleMessage(Message m){
@@ -93,7 +104,7 @@ public class MainActivity extends AppCompatActivity{
                       imageView.setImageBitmap(bitmap);
                     break;
                 case 3:
-                  //  ((TextView)findViewById(R.id.testText)).setText(myDataManager.getCourses());
+                    intoCourseActivity(myDataManager.getCourses());
                     break;
             }
             super.handleMessage(m);
@@ -122,12 +133,11 @@ public class MainActivity extends AppCompatActivity{
     }
 
     //获取所有信息
-    private  void pullTeacherThread(){
-        myDataManager.getAllTeachers();
+    private  void loadTeacherThread(){
+        myDataManager.loadTeacherInfo();
         Message m = new Message();
         m.what = 1;
         handler.sendMessage(m);
-       // myDB.insertTeacher(pd.teachers);
     }
 
     //初始化listview
@@ -167,7 +177,7 @@ public class MainActivity extends AppCompatActivity{
         new Thread(new Runnable() {
             @Override
             public void run() {
-                myDataManager.getCourses();
+                myDataManager.loadCourses();
                 Message m = new Message();
                 m.what = 3;
                 handler.sendMessage(m);
@@ -175,6 +185,15 @@ public class MainActivity extends AppCompatActivity{
         }).start();
     }
 
+    public void intoCourseActivity(List<Course> courses){
+        Intent intent = new Intent();
+        intent.setClass(this, CoursesActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("courses",(Serializable)courses);
+        intent.putExtras(bundle);
+        startActivity(intent);
+
+    }
 
     public void selectName(View view) {
         setLeftInAnimation();

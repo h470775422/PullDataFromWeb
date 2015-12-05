@@ -26,11 +26,20 @@ public class MyDataManager {
         return teacher;
     }
 
+    public List<Course> getCourses() {
+        return courses;
+    }
+
+    public void setCourses(List<Course> courses) {
+        this.courses = courses;
+    }
+
     public void setTeacher(String teacher) {
+
         this.teacher = teacher;
         for(Teacher t:teachers){
             if(t.name.equals(teacher)){
-                tno = t.id;
+                tno = t.no;
             }
         }
     }
@@ -105,13 +114,29 @@ public class MyDataManager {
     }
 
 
-    public void getAllTeachers(){
-        teachers = connector.getAllTeachers();
+    public void loadTeacherInfo(){
+        teachers = myDB.checkTeacherInfo();
+        if(teachers.size() <= 0){
+            teachers = connector.getAllTeachers();
+            new Thread(){
+                public void run(){
+                    myDB.insertTeachers(teachers);
+                }
+            }.start();
+        }
     }
 
-    public void getCourses(){
-        courses = connector.getCourses(term,tno,type,validate);
-        myDB.insertCourses(courses,tno);
+    public void loadCourses(){
+        final String no = tno;
+        courses =  myDB.checkCourses(tno);
+        if(courses.size() <= 0){
+            courses = connector.getCourses(term,tno,type,validate);
+            new Thread(){
+                public void run(){
+                    myDB.insertCourses(courses,no);
+                }
+            }.start();
+        }
     }
 }
 

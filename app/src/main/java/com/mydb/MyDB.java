@@ -1,11 +1,13 @@
 package com.mydb;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.DataManager.Course;
 import com.DataManager.Teacher;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -25,7 +27,7 @@ public class MyDB {
     public void insertTeachers(List<Teacher> teachers){
         String sql = "insert into teacher values(?,?)";
         for(Teacher t:teachers){
-            writeDB.execSQL(sql,new String[]{t.id,t.name});
+            writeDB.execSQL(sql,new String[]{t.no,t.name});
         }
     }
 
@@ -59,9 +61,46 @@ public class MyDB {
                 readDB.execSQL(tnoSql,items2);
                 preCno = c.getCno();
             }
-
         }
+    }
 
+    public List<Teacher> checkTeacherInfo(){
+        String sql = "select * from teacher";
+        Cursor cursor = readDB.rawQuery(sql,null);
+        List<Teacher> teachers = new ArrayList<>();
+        if(cursor.getCount() > 0){
+            while(cursor.moveToNext()){
+                Teacher teacher = new Teacher();
+                teacher.no = cursor.getString(cursor.getColumnIndex("tno"));
+                teacher.name = cursor.getString(cursor.getColumnIndex("name"));
+                teachers.add(teacher);
+            }
+        }
+        return teachers;
+    }
+
+
+    public List<Course> checkCourses(String tno){
+        String sql = "select course.* from course,tc where tc.tno = ? and tc.cno = course.cno";
+        Cursor cursor = readDB.rawQuery(sql,new String[]{tno});
+        List<Course> courses = new ArrayList<>();
+        if(cursor.getCount() > 0){
+            while(cursor.moveToNext()){
+                Course course = new Course();
+                course.setCno(cursor.getString(cursor.getColumnIndex("cno")));
+                course.setName(cursor.getString(cursor.getColumnIndex("name")));
+                course.setScore(cursor.getString(cursor.getColumnIndex("score")));
+                course.setType(cursor.getString(cursor.getColumnIndex("type")));
+                course.setCourseType(cursor.getString(cursor.getColumnIndex("courseType")));
+                course.setClassNo(cursor.getString(cursor.getColumnIndex("classNo")));
+                course.setClassName(cursor.getString(cursor.getColumnIndex("className")));
+                course.setNumbers(cursor.getString(cursor.getColumnIndex("numbers")));
+                course.setTime(cursor.getString(cursor.getColumnIndex("time")));
+                course.setAddress(cursor.getString(cursor.getColumnIndex("address")));
+                courses.add(course);
+            }
+        }
+        return courses;
     }
     public void closeDB(){
         writeDB.close();

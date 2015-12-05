@@ -5,7 +5,7 @@ package com.DataManager;
  */
 public class Teacher {
 
-    public String id = "";
+    public String no = "";
     public String name = "";
 
 }
